@@ -1,0 +1,478 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APOE Genotype Dashboard</title>
+  <style>
+    :root {
+      --bg: #f6f7fb;
+      --surface: #ffffff;
+      --surface-2: #f1f4f9;
+      --text: #243040;
+      --muted: #6c7784;
+      --accent: #2a78d6;
+      --accent-2: #1baf7a;
+      --border: #dfe6ee;
+      --shadow: 0 10px 30px rgba(36, 48, 64, 0.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, #f7f9fc 0%, #eef4fb 100%);
+      padding: 24px;
+    }
+
+    .dashboard {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 720px;
+      line-height: 1.5;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      background: linear-gradient(180deg, var(--surface-2) 0%, #fdfefe 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 10px;
+      text-align: center;
+      min-height: 92px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .stat-percent {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 16px 0 14px;
+    }
+
+    .control-btn {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .control-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .control-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      box-shadow: 0 6px 14px rgba(42, 120, 214, 0.2);
+    }
+
+    .chart-card {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #fcfdff 0%, #f9fbfd 100%);
+    }
+
+    #chart-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 340px;
+    }
+
+    #custom-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .dashboard { padding: 16px; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .chart-wrap { height: 300px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="header">
+      <div>
+        <p class="eyebrow">UK Biobank cohort overview</p>
+        <h1>APOE genotype dashboard</h1>
+        <p class="subtitle">Explore how demographic and lifestyle factors vary across APOE genotype groups in this curated cohort summary.</p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">ε4/ε4</div>
+        <div class="stat-value">770</div>
+        <div class="stat-percent">2.2%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ε3/ε3</div>
+        <div class="stat-value">20,770</div>
+        <div class="stat-percent">59.3%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ε2/ε2</div>
+        <div class="stat-value">202</div>
+        <div class="stat-percent">0.6%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ε3/ε4</div>
+        <div class="stat-value">8,130</div>
+        <div class="stat-percent">23.2%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ε2/ε3</div>
+        <div class="stat-value">4,330</div>
+        <div class="stat-percent">12.4%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">ε2/ε4</div>
+        <div class="stat-value">833</div>
+        <div class="stat-percent">2.4%</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="control-btn" onclick="showChart('sex')" id="btn-sex">Sex</button>
+      <button class="control-btn" onclick="showChart('baselineAge')" id="btn-baselineAge">Baseline age</button>
+      <button class="control-btn" onclick="showChart('age')" id="btn-age">Age at imaging</button>
+      <button class="control-btn active" onclick="showChart('alcohol')" id="btn-alcohol">Alcohol</button>
+      <button class="control-btn" onclick="showChart('smoking')" id="btn-smoking">Smoking</button>
+      <button class="control-btn" onclick="showChart('diet')" id="btn-diet">Healthy diet</button>
+      <button class="control-btn" onclick="showChart('exercise')" id="btn-exercise">Physical activity</button>
+      <button class="control-btn" onclick="showChart('sleep')" id="btn-sleep">Sleep</button>
+      <button class="control-btn" onclick="showChart('education')" id="btn-education">Education</button>
+      <button class="control-btn" onclick="showChart('ethnicity')" id="btn-ethnicity">Ethnicity</button>
+      <button class="control-btn" onclick="showChart('marriage')" id="btn-marriage">Marriage</button>
+      <button class="control-btn" onclick="showChart('deprivation')" id="btn-deprivation">Deprivation</button>
+      <button class="control-btn" onclick="showChart('dementia')" id="btn-dementia">Dementia</button>
+      <button class="control-btn" onclick="showChart('familyAD')" id="btn-familyAD">Family AD history</button>
+    </div>
+
+    <div class="chart-card">
+      <div id="chart-title"></div>
+      <div class="chart-wrap">
+        <canvas id="mainChart" role="img" aria-label="Bar chart showing selected variable by APOE genotype group"></canvas>
+      </div>
+      <div id="custom-legend"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script>
+    const labels = ['ε4/ε4', 'ε3/ε3', 'ε2/ε2', 'ε3/ε4', 'ε2/ε3', 'ε2/ε4'];
+
+    const chartData = {
+      sex: {
+        title: 'Sex distribution by APOE genotype (%)',
+        type: 'bar',
+        stacked: true,
+        datasets: [
+          { label: 'Male', data: [54.55, 47.8, 46.04, 45.97, 46.93, 44.9], color: '#2a78d6', dash: [] },
+          { label: 'Female', data: [45.45, 52.2, 53.96, 54.03, 53.07, 55.1], color: '#e87ba4', dash: [5,3] }
+        ],
+        yLabel: '%', yMax: 100
+      },
+      baselineAge: {
+        title: 'Mean age at baseline by APOE genotype (years)',
+        type: 'bar',
+        stacked: false,
+        datasets: [
+          { label: 'Mean age at baseline', data: [54.2, 54.9, 54.7, 54.5, 55.0, 54.8], color: '#2a78d6', dash: [] }
+        ],
+        yLabel: 'years', yMin: 54, yMax: 55.2
+      },
+      age: {
+        title: 'Mean age at brain imaging by APOE genotype (years)',
+        type: 'bar',
+        stacked: false,
+        datasets: [
+          { label: 'Mean age at imaging', data: [63.1, 63.8, 63.7, 63.3, 63.8, 63.7], color: '#2a78d6', dash: [] }
+        ],
+        yLabel: 'years', yMin: 62, yMax: 65
+      },
+      alcohol: {
+        title: 'Alcohol consumption by APOE genotype (%)',
+        type: 'bar',
+        stacked: true,
+        datasets: [
+          { label: 'Excessive', data: [26.36, 28.13, 28.71, 28.86, 28.75, 25.93], color: '#e34948', dash: [] },
+          { label: 'Moderate', data: [62.99, 60.98, 56.93, 59.98, 60.28, 63.51], color: '#2a78d6', dash: [5,3] },
+          { label: 'Not drinking', data: [10.65, 10.84, 14.36, 11.16, 10.95, 10.56], color: '#888780', dash: [2,2] }
+        ],
+        yLabel: '%', yMax: 100
+      },
+      smoking: {
+        title: 'Current smoking by APOE genotype (%)',
+        type: 'bar',
+        stacked: false,
+        datasets: [
+          { label: 'Current smoker', data: [4.94, 6.23, 4.95, 6.27, 6.07, 5.64], color: '#e34948', dash: [] }
+        ],
+        yLabel: '%', yMax: 10
+      },
+      diet: {
+        title: 'Healthy diet adherence by APOE genotype (%)',
+        type: 'bar',
+        stacked: false,
+        datasets: [
+          { label: 'Healthy diet', data: [52.99, 48.79, 44.55, 49.43, 47.64, 47.78], color: '#1baf7a', dash: [] }
+        ],
+        yLabel: '%', yMax: 65
+      },
+      exercise: {
+        title: 'Regular physical activity by APOE genotype (%)',
+        type: 'bar',
+        stacked: false,
+        datasets: [
+          { label: 'Regular physical activity', data: [76.1, 75.07, 75.74, 74.72, 75.4, 72.39], color: '#1baf7a', dash: [] }
+        ],
+        yLabel: '%', yMax: 90
+      },
+      sleep: {
+        title: 'Healthy sleep (6–8 h) by APOE genotype (%)',
+        type: 'bar',
+        stacked: false,
+        datasets: [
+          { label: 'Sleeping 6–8 h', data: [44.42, 43.41, 44.06, 44.83, 41.8, 45.62], color: '#4a3aa7', dash: [] }
+        ],
+        yLabel: '%', yMax: 60
+      },
+      education: {
+        title: 'College/university degree by APOE genotype (%)',
+        type: 'bar',
+        stacked: false,
+        datasets: [
+          { label: 'College/university degree', data: [48.7, 46.49, 43.56, 46.13, 45.68, 47.78], color: '#eda100', dash: [] }
+        ],
+        yLabel: '%', yMax: 65
+      },
+      ethnicity: {
+        title: 'Ethnicity distribution by APOE genotype (%)',
+        type: 'bar',
+        stacked: true,
+        datasets: [
+          { label: 'British', data: [94.16, 91.87, 92.57, 92.68, 92.42, 94.72], color: '#2a78d6', dash: [] },
+          { label: 'Other', data: [5.84, 8.13, 7.43, 7.32, 7.58, 5.28], color: '#e87ba4', dash: [5,3] }
+        ],
+        yLabel: '%', yMax: 100
+      },
+      marriage: {
+        title: 'Living with a partner by APOE genotype (%)',
+        type: 'bar',
+        stacked: false,
+        datasets: [
+          { label: 'Living with a partner', data: [79.35, 77.4, 78.22, 77.43, 77.04, 74.91], color: '#1baf7a', dash: [] }
+        ],
+        yLabel: '%', yMax: 100
+      },
+      deprivation: {
+        title: 'Above Townsend deprivation median by APOE genotype (%)',
+        type: 'bar',
+        stacked: false,
+        datasets: [
+          { label: 'Above median', data: [39.87, 42.13, 39.11, 42.14, 40.53, 40.1], color: '#eda100', dash: [] }
+        ],
+        yLabel: '%', yMax: 100
+      },
+      dementia: {
+        title: 'Dementia prevalence by APOE genotype (%)',
+        type: 'bar',
+        stacked: false,
+        datasets: [
+          { label: 'Dementia', data: [0, 0, 0.5, 0.02, 0.05, 0], color: '#e34948', dash: [] }
+        ],
+        yLabel: '%', yMax: 0.6
+      },
+      familyAD: {
+        title: 'Family history of Alzheimer\'s disease by APOE genotype (%)',
+        type: 'bar',
+        stacked: true,
+        datasets: [
+          { label: 'Father has AD', data: [16.62, 8.49, 9.41, 12.58, 8.43, 12.36], color: '#2a78d6', dash: [] },
+          { label: 'Mother has AD', data: [28.96, 16.03, 12.38, 22.82, 15.13, 22.69], color: '#e87ba4', dash: [5,3] },
+          { label: 'Sibling has AD', data: [3.51, 1.26, 0.5, 2.35, 1.18, 2.4], color: '#eda100', dash: [2,2] }
+        ],
+        yLabel: '%', yMax: 65
+      }
+    };
+
+    Chart.defaults.font.family = 'Segoe UI, Arial, sans-serif';
+    Chart.defaults.color = '#6c7784';
+
+    let currentChart = null;
+    let activeBtn = null;
+
+    function showChart(key) {
+      const cfg = chartData[key];
+      document.getElementById('chart-title').textContent = cfg.title;
+
+      if (currentChart) currentChart.destroy();
+
+      const datasets = cfg.datasets.map(d => ({
+        label: d.label,
+        data: d.data,
+        backgroundColor: d.color + (cfg.stacked ? 'cc' : 'dd'),
+        borderColor: d.color,
+        borderWidth: 1,
+        borderSkipped: false,
+        borderRadius: cfg.stacked ? 0 : 4,
+        borderDash: d.dash
+      }));
+
+      const ctx = document.getElementById('mainChart');
+      currentChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 600 },
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#243040',
+              padding: 10,
+              callbacks: {
+                label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}${cfg.yLabel === '%' ? '%' : ' ' + cfg.yLabel}`
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: cfg.stacked || false,
+              grid: { display: false },
+              ticks: { color: '#898781', font: { size: 12 } }
+            },
+            y: {
+              stacked: cfg.stacked || false,
+              min: cfg.yMin || 0,
+              max: cfg.yMax,
+              grid: { color: '#e1e0d9' },
+              ticks: {
+                color: '#898781',
+                font: { size: 12 },
+                callback: v => cfg.yLabel === '%' ? v + '%' : v
+              }
+            }
+          }
+        }
+      });
+
+      const legend = document.getElementById('custom-legend');
+      legend.innerHTML = cfg.datasets.map(d =>
+        `<span class="legend-item">
+          <span class="legend-swatch" style="background:${d.color};"></span>${d.label}
+        </span>`
+      ).join('');
+
+      document.querySelectorAll('.control-btn').forEach(btn => btn.classList.remove('active'));
+      const btn = document.getElementById('btn-' + key);
+      if (btn) btn.classList.add('active');
+      activeBtn = key;
+    }
+
+    showChart('alcohol');
+  </script>
+</body>
+</html>
